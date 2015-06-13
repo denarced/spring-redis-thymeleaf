@@ -17,6 +17,17 @@ function td(text) {
 }
 
 /**
+ * Edit value: load key and value into inputs.
+ */
+function editButton(key) {
+    var format = '<button '
+        + 'class="btn btn-default" '
+        + 'onclick="editKey(\'{key}\')" '
+        + '>Edit</button>';
+    return format.replace(/{key}/g, key);
+}
+
+/**
  * Create HTML button with which a key-value pair is deleted from persistence.
  *
  * \param key (str) that'll be deleted when the created button is clicked.
@@ -37,7 +48,12 @@ function deleteButton(key) {
  * \param value (str) text into the value cell.
  */
 function row(key, value) {
-    return $(tr(td(key) + td(value) + td(deleteButton(key))));
+    return $(
+        tr(
+            td(key) +
+            td(value) +
+            td(editButton(key)) +
+            td(deleteButton(key))));
 }
 
 /**
@@ -54,6 +70,24 @@ function refreshTable() {
             }
         }
     });
+}
+
+function editKey(key) {
+    /* Find the row with key in first column (key column). */
+    var format = '#mainTable tbody td:first-child:contains("{key}")',
+        selector = format.replace(/{key}/, key),
+        cells = $(selector).parent().children(),
+        key = cells[0].textContent,
+        value = cells[1].textContent,
+        keyInput = $('#keyInput'),
+        valueInput = $('#valueInput');
+
+    /* Load the key and value texts into inputs
+     * Select value text so it can be directly typed to
+     */
+    keyInput.val(key);
+    valueInput.val(value);
+    valueInput.select();
 }
 
 /**
@@ -83,6 +117,7 @@ $(document).ready(function() {
             key: keyInput.val(),
             value: valueInput.val()
         };
+
         /*
          * Persist the new key-value pair.
          * Clear the inputs.

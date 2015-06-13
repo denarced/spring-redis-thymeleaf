@@ -6,10 +6,10 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 @Repository
 public class RedisRepositoryImpl implements RedisRepository {
@@ -27,7 +27,7 @@ public class RedisRepositoryImpl implements RedisRepository {
         List<String> keys = new ArrayList<>(stringRedisTemplate.keys("*"));
         List<String> values = valueOps.multiGet(keys);
         int size = Math.min(keys.size(), values.size());
-        Map<String, String> map = new HashMap<>(size);
+        Map<String, String> map = new TreeMap<>();
         for (int i = 0; i < size; i++) {
             map.put(keys.get(i), values.get(i));
         }
